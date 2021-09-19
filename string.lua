@@ -1,6 +1,7 @@
 local type = type
 local select = select
 local assert = assert
+local tonumber = tonumber
 
 local string = string
 local srep = string.rep
@@ -8,7 +9,6 @@ local sfind = string.find
 local sgsub = string.gsub
 local sgmatch = string.gmatch
 
-local toint = math.tointeger
 local tconcat = table.concat
 
 ---comment 计算`pattern`在`text`中pos位置开始出现的总次数.
@@ -39,7 +39,7 @@ end
 ---@return string @返回拼接好的字符串
 function string.center (text, fill, count)
   assert(type(text) == 'string' and type(fill) == 'string' , "Invalid string `text` or `fill`.")
-  assert(type(count) == 'number' and toint(count) or count > 0, "Invalid fill `count`")
+  assert(type(count) == 'number' and tonumber(count) or count > 0, "Invalid fill `count`")
   local fill_text = srep(fill, count)
   return tconcat{ fill_text, text, fill_text }
 end
