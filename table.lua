@@ -5,6 +5,8 @@ local rawlen = rawlen
 local assert = assert
 local select = select
 
+local ceil = math.ceil
+local floor = math.floor
 local sformat = string.format
 
 local tsort = table.sort
@@ -23,7 +25,10 @@ end
 ---@return integer
 function table.rawlen (tab)
   assert(type(tab) == 'table', "Invalid table.")
-  return rawlen(tab)
+  if rawlen then
+    return rawlen(tab)
+  end
+  return #tab
 end
 
 ---comment 返回数组内最大`value`
@@ -227,7 +232,7 @@ end
 function table.tohash(tab)
   assert(type(tab) == 'table', "Invalid table.")
   local len = #tab
-  assert(len & 0x01 == 0x00, "Invalid table len.")
+  assert(ceil(len / 2) == floor(len / 2), "Invalid key value amount.")
   local hashtab = {}
   for idx = 1, len, 2 do
     hashtab[tab[idx]] = tab[idx+1]
@@ -255,7 +260,7 @@ end
 ---@return table    @返回构建好的table
 function table.wrap(...)
   local len = select("#", ...)
-  assert(len & 0x01 == 0x00, "Invalid key value amount.")
+  assert(ceil(len / 2) == floor(len / 2), "Invalid key value amount.")
   local list = {...}
   local tab = {}
   for idx = 1, len, 2 do
