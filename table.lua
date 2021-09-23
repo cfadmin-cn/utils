@@ -11,6 +11,7 @@ local sformat = string.format
 
 local tsort = table.sort
 local tconcat = table.concat
+local tunpack = table.unpack
 
 ---comment 获取`table`长度
 ---@param tab table
@@ -267,4 +268,78 @@ function table.wrap(...)
     tab[list[idx]] = list[idx+1]
   end
   return tab
+end
+
+---comment 求一个序列或者多个序列进行函数映射之后的值
+---@param func   function  @回调函数, 返回值不能为`nil`
+---@param list1  table     @多个数组(至少一个)
+---@return table           @返回新数组
+function table.map(func, list1, ...)
+	assert(type(func) == 'function', "Invalid `function`.")
+	assert(type(list1) == 'table', "Invalid `table`.")
+	local newlist = {}
+	local lists = {list1, ...}
+	local count = #lists
+	local len
+	for i = 1, count do
+		local l = #(lists[i])
+		if not len or len <= l then
+			len = l
+		end
+	end
+	local args = {}
+	for index = 1, len do
+		for idx, list in ipairs(lists) do
+			args[idx] = list[index]
+		end
+		local o = func(tunpack(args))
+		if o ~= nil then
+			newlist[#newlist+1] = o
+		end
+	end
+	return newlist
+end
+
+---comment 过滤不符合函数条件的元素并返回新的结果数组
+---@param func   function  @回调函数, 返回值必须是`boolean`
+---@param list   table     @原始数组
+---@return table           @返回新数组
+function table.filter(func, list)
+	assert(type(func) == 'function', "Invalid `function`.")
+	assert(type(list) == 'table', "Invalid `table`.")
+	local newlist = {}
+	for i = 1, #list do
+		local ok = func(list[i])
+		assert(type(ok) == 'boolean', "callback must return `true` or `false`.")
+		if ok then
+			newlist[#newlist+1] = list[i]
+		end
+	end
+	return newlist
+end
+
+---comment 过滤不符合函数条件的元素并返回新的结果数组
+---@param func   function  @回调函数, 返回值必须是`boolean`
+---@param list   table     @原始数组
+---@return number          @返回计算结果
+function table.reduce(func, list)
+	assert(type(func) == 'function', "Invalid `function`.")
+	assert(type(list) == 'table', "Invalid `table`.")
+	local len = #list
+	if len <= 1 then
+		if len == 1 then
+			return list[1]
+		end
+		return error("can't passed empty array.")
+	end
+	local args = {list[1], nil}
+	for i = 2, len do
+		args[2] = list[i]
+		local result = func(args[1], args[2])
+		if type(result) ~= 'number' then
+			return
+		end
+		args[1] = result
+	end
+	return args[1]
 end
