@@ -153,6 +153,9 @@ end
 ---@param count number  @替换次数
 ---@return string       @替换后内容
 function string.replace (text, s1, s2, count)
+  assert(type(text) == 'string' and text ~= '', "Invalid text string.")
+  assert(type(s1) == 'string' and s1 ~= '', "Invalid s1 string.")
+  assert(type(s2) == 'string' and s2 ~= '', "Invalid s2 string.")
   local s = sgsub(text, s1, s2, count)
   return s
 end
