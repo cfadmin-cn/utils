@@ -4,8 +4,10 @@ local assert = assert
 local tonumber = tonumber
 
 local string = string
+local ssub = string.sub
 local srep = string.rep
 local sfind = string.find
+local sbyte = string.byte
 local sgsub = string.gsub
 local sgmatch = string.gmatch
 
@@ -153,6 +155,30 @@ end
 function string.replace (text, s1, s2, count)
   local s = sgsub(text, s1, s2, count)
   return s
+end
+
+---comment 字符串转换为字节数组
+---@param  text string  @待转换的字符串
+---@return table        @转换后的字节数组
+function string.tobytes(text)
+  assert(type(text) == 'string' and text ~= '', "Invalid text string.")
+  local list = {}
+  for idx = 1, #text do
+    list[#list+1] = sbyte(text, idx)
+  end
+  return list
+end
+
+---comment 向指定位置的字符串后插入字符串.
+---@param text   string  @原始字符串
+---@param pos    integer @待插入的位置
+---@param str    string  @待插入的字符串
+---@return string        @返回插入后的字符串内容
+function string.insert(text, pos, str)
+  assert(type(text) == 'string' and text ~= '', "Invalid text string.")
+  assert(type(pos) == 'number', "Invalid pos integer.")
+  assert(type(str) == 'string' and str ~= '', "Invalid text string.")
+  return tconcat{ssub(text, 1, pos), str, ssub(text, pos + 1, -1)}
 end
 
 local _, liconv = pcall(require, "liconv")
