@@ -152,7 +152,7 @@ end
 ---comment 指数分布
 ---@param lambd number @lambd 是1.0除以所需的平均值.
 function random.expovariate(lambd)
-  return -mlog(1.0 - random()) / lambd
+  return -mlog(1.0 - mrandom()) / lambd
 end
 
 ---comment 高斯分布
